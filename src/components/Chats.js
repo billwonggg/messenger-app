@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { ChatEngine } from "react-chat-engine";
 import { firebaseAuth } from "../firebase";
@@ -9,18 +10,23 @@ const Chats = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
-  console.log(user, "user");
-
   const logout = async () => {
     await firebaseAuth.signOut();
-    // history.push("/");
+    history.push("/");
   };
 
   const getImage = async (url) => {
-    const resp = await fetch(url);
-    const data = resp.blob();
-
-    return new File([data], "userPhoto.jpg", { type: "image/jpeg" });
+    try {
+      const resp = await fetch(url, {
+        mode: "no-cors",
+      });
+      if (resp.statusCode === 200) {
+        const data = await resp.blob();
+        return new File([data], "userPhoto.jpg", { type: "image/jpeg" });
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -29,13 +35,14 @@ const Chats = () => {
       return;
     }
 
-    fetch("https://api.chatengine.io/users.me", {
-      headers: {
-        "project-id": "8af4a8f7-0b79-401b-80f6-f134a3ee5819",
-        "user-name": user.email,
-        "user-secret": user.uid,
-      },
-    })
+    axios
+      .get("https://api.chatengine.io/users/me/", {
+        headers: {
+          "project-id": "8af4a8f7-0b79-401b-80f6-f134a3ee5819",
+          "user-name": user.email,
+          "user-secret": user.uid,
+        },
+      })
       .then(() => {
         // user already exists
         setLoading(false);
@@ -47,22 +54,27 @@ const Chats = () => {
         form.append("email", user.email);
         form.append("username", user.email);
         form.append("secret", user.uid);
-        getImage(user.photoURL).then((avatar) => {
-          form.append("avatar", avatar, avatar.name);
-          fetch("https://api.chatengine.io/users", {
-            method: "POST",
-            headers: {
-              "private-key": "845a7cf7-5334-4b9f-bcc2-4fd3a22d3c82",
-            },
-            body: form,
+        getImage(user.photoURL)
+          .then((avatar) => {
+            form.append("avatar", avatar, avatar.name);
+            console.log(form);
+            axios
+              .post("https://api.chatengine.io/users/", {
+                form,
+                headers: {
+                  "private-key": "845a7cf7-5334-4b9f-bcc2-4fd3a22d3c82",
+                },
+              })
+              .then(() => {
+                setLoading(false);
+              })
+              .catch((err) => {
+                console.error(err);
+              });
           })
-            .then(() => {
-              setLoading(false);
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        });
+          .catch((err) => {
+            console.error(err);
+          });
       });
   }, [user, history]);
 

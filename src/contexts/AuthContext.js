@@ -16,7 +16,9 @@ export const AuthProvider = ({ children }) => {
       console.log(usr);
       setUser(usr);
       setLoading(false);
-      if (user) history.push("/chats");
+      if (user != null) {
+        history.push("/chats");
+      }
     });
   }, [user, history]);
 
