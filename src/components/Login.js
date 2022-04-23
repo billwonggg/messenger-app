@@ -7,7 +7,7 @@ const Login = () => {
   return (
     <div id="login-page">
       <div id="login-card">
-        <h2>Welcome to Messenger</h2>
+        <h2>Welcome to Message Space</h2>
         <div
           className="login-button google"
           onClick={() =>
