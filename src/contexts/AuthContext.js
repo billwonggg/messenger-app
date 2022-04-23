@@ -12,8 +12,9 @@ export const AuthProvider = ({ children }) => {
   const history = useHistory();
 
   useEffect(() => {
-    firebaseAuth.onAuthStateChanged((user) => {
-      setUser(user);
+    firebaseAuth.onAuthStateChanged((usr) => {
+      console.log(usr);
+      setUser(usr);
       setLoading(false);
       if (user) history.push("/chats");
     });

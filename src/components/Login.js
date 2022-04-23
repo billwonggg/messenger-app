@@ -4,9 +4,8 @@ import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { firebaseAuth } from "../firebase";
 
 const Login = () => {
-  signInWithRedirect();
   return (
-    <div id="login-page google">
+    <div id="login-page">
       <div id="login-card">
         <h2>Welcome to Messenger</h2>
         <div
