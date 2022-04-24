@@ -72,6 +72,7 @@ const Chats = () => {
         projectID={process.env.REACT_APP_CHAT_ENGINE_ID}
         userName={user.email}
         userSecret={user.uid}
+        offset={10}
       />
     </div>
   );
