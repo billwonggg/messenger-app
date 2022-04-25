@@ -5,6 +5,7 @@ import { ChatEngine } from "react-chat-engine";
 import { firebaseAuth } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import FormData from "form-data";
+import Loading from "./Loading";
 
 const Chats = () => {
   const history = useHistory();
@@ -58,8 +59,9 @@ const Chats = () => {
       });
   }, [user, history]);
 
-  if (!user || loading) return "Loading...";
-  return (
+  return !user || loading ? (
+    <Loading />
+  ) : (
     <div className="chats-page">
       <div className="nav-bar">
         <div className="logo-tab">Message Space</div>
